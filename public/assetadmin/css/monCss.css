@@ -1,0 +1,42 @@
+
+  /* input[type=file]{
+  padding:10px;
+  color: aliceblue;
+  background:#2d2d2d;} */
+
+  /* input[type=text] {
+    border: none;
+    border-bottom: 2px solid rgb(26, 27, 26);
+  } */
+  div#tribu {
+    height: 93%;
+}
+
+.dl dt {
+    float: left;
+    width: 45%;
+    padding: 0!important;
+    overflow: hidden;
+    clear: left;
+    text-align: right;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    /* font-size: 13px; */
+}
+
+.dl dd {
+    margin-left: 49% !important;
+    /* font-size: 13px; */
+}
+
+  .mon{
+
+    border: none !important;
+    border-bottom: 2px solid rgb(26, 27, 26) !important;
+  }
+  .has-float-label .form-control:placeholder-shown:not(:focus)+* {
+    font-size: 110% !important;
+    padding: 7px !important;
+    opacity: .5 !important;
+    top: .3em !important;
+}

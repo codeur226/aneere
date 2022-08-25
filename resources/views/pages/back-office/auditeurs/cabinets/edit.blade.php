@@ -1,0 +1,55 @@
+@section("pageTitle")
+{{ $title }}
+@endsection
+@section('sectionTitle')
+<li class="breadcrumb-item"><a href="{{ route('auditeurs.index', ['statut'=>'cabinet']) }}">Cabinets</a></li>
+<li class="breadcrumb-item active" aria-current="page">Mise à jour du cabinet</li>
+@endsection
+<x-master-layout>
+
+   <div class="row">
+    <div class=" col-md-11 offset-1">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Mise à jour du cabinet</h3>
+            </div>
+            <div class="card-body">
+                <form action="{{ route('auditeurs.update', ['statut'=>$auditeur->statut, 'auditeur'=> $auditeur]) }}" method="post" >
+                    @method("PUT")
+                   @include('pages.back-office.auditeurs.cabinets._formulaire', ["btnTexte" => "Enregistrer","btnCancel" => "Annuler"])
+                </form>
+                {{-- <script type="text/javascript">
+                    function ShowHideDiv() {
+                        var chkYes = document.getElementById("prive");
+                        var num_rccm = document.getElementById("num_rccm");
+                        num_rccm.style.display = chkYes.checked ? "block" : "none";
+                        var num_ifu = document.getElementById("num_ifu");
+                        num_ifu.style.display = chkYes.checked ? "block" : "none";
+                        var autre = document.getElementById("autre");
+                        autre.style.display = chkYes.checked ? "block" : "none";
+                    }
+            </script>
+        <script>
+        $(function() {
+        $("input[name='publique']").click(function() {
+        if ($("#prive").is(":checked")) {
+        $("#num_rccm").show();
+        $("#num_ifu").show();
+        $("#autre").show();
+        } else {
+        $("#num_rccm").hide();
+        $("#num_ifu").hide();
+        $("#autre").hide();
+        }
+        });
+        });
+        </script> --}}
+            </div>
+
+        </div>
+    </div><!-- COL END -->
+</div>
+<!-- ROW-1 End-->
+
+</x-master-layout>
+
