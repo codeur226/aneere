@@ -1,4 +1,3 @@
-
 @section("pageTitle")
 {{ $title }}
 @endsection
@@ -15,6 +14,14 @@
     <div class="col-lg-8 offset-2">
         <div class="tab-content">
             <div class="card2 card">
+                <div class="card-header">
+                    <h3 class="card-title mr-5 text-center"><a href="{{ route('fiche3_index',$audit->id) }}" class="btn btn-primary btn-icon text-white">
+                       <span>
+                           <i class="fa fa-book"></i>
+                       </span>Liste des données des appareils électiques pour cet audit
+                   </a></h3>
+                     {{-- ordinateur, imprimante, photocopieuse, congélateur, projecteur, etc --}}
+                </div>
                     <div class="card-body">
                         <div class="wideget-user">
                             <div class="wideget-user-desc">
@@ -49,7 +56,6 @@
                                     @if($audit->etat=='Clôturé')
                                     
                                     <a type="button" class="btn btn-success btn-lg" href="{{ route('exporter',$audit) }}"><i class="fe fe-book"></i>Le rapport</a>&nbsp;&nbsp;
-                                    
                                     
                                     @else
                                     

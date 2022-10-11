@@ -3815,8 +3815,8 @@ window.deleteConfirm = function (formId) {
     showCancelButton: true,
     confirmButtonColor: '#3085d6',
     cancelButtonColor: '#d33',
-    confirmButtonText: 'Oui, supprimer!',
-    cancelButtontext: 'Annuler'
+    confirmButtonText: 'Oui, supprmer!',
+    cancelButtontext: 'Annule'
   }).then(function (result) {
     if (result.isConfirmed) {
       document.getElementById(formId).submit();

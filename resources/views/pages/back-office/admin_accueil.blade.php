@@ -135,7 +135,7 @@
 						<canvas id="canvasDoughnut" class="chartsh"></canvas>
 					</div>
 					<div class="mt-5 fs-12">
-						<div class="float-left mr-3"><span class="dot-label bg-primary mr-1"></span><span class="">Réalisé par ANEREE</span></div>
+						<div class="float-left mr-3"><span class="dot-label bg-primary mr-1"></span><span class=""> ANEREE</span></div>
 						<div class="float-left mr-3"><span class="dot-label bg-secondary mr-1"></span><span class="">Womens</span></div>
 						<div class="float-left mr-3"><span class="dot-label bg-secondary1 mr-1"></span><span class="">Kids</span></div>
 						<div class="float-left mr-3"><span class="dot-label bg-canvas1 mr-1"></span><span class="">Electronics</span></div>

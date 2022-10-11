@@ -34,11 +34,11 @@
                                                         @if(Auth::user()->role->nom == 'Directeur')
 														<th class="wd-15p">Agent</th>
                                                         @endif
-                                                        <th class="wd-10p">Etat</th>
 														<th class="wd-15p">Etablissement</th>
 														<th class="wd-15p">Point focal</th>
 														<th class="wd-15p">Date declaration</th>
 														<th class="wd-15p">Date echeance</th>
+                                                        <th class="wd-10p">Etat</th>
 														
 														{{-- <th class="wd-20p">satut</th> --}}
 													</tr>
@@ -49,7 +49,6 @@
                                                         @if(Auth::user()->role->nom == 'Directeur')
                                                         <td> {{ ($audit->user) ? $audit->user->name : 'Non affecté' }}</td>
 														@endif
-                                                        <td> {{ $audit->etat }}</td>
                                                         <td> {{ $audit->consommateur->nom }}</td>
                                                         <td>
 															<a class="stretched-link" href="{{ route('audits.show', $audit) }}"></a>
@@ -58,6 +57,7 @@
 														{{-- <td>{{ $audit->consommateur->user->name  }} </td> --}}
                                                             <td> {{ formatDate($audit->dateDeclaration) }}</td>
                                                             <td> {{ formatDate($audit->dateEcheance) }}</td>
+                                                        <td> {{ $audit->etat }}</td>
                                                             
                                                         {{-- <td>
                                                             @if ($auditeur->statut == 'publique')

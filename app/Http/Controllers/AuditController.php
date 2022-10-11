@@ -163,7 +163,12 @@ class AuditController extends Controller
             'user_id' => Auth::user()->id,
         ]);
 
-        return redirect()->route('collectes.index')->with('statut', 'L\' audit a été clôturé avec succès');
+        //return redirect()->route('collectes.index')->with('statut', 'L\' audit a été clôturé avec succès');
+
+        return view('pages.back-office.audits.electricites.show', [
+            'audit' => $audit,
+            'title' => 'Gestion des audits',
+      ]);
     }
 
     /**

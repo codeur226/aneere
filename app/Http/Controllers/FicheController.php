@@ -18,7 +18,7 @@ class FicheController extends Controller
     {
         return view('pages.back-office.fiches.index', [
             'fiches' => Fiche::all(),
-            'title' => 'Parametrage des fiches',
+            'title' => 'Gestion des fiches',
         ]);
     }
 
@@ -120,6 +120,7 @@ class FicheController extends Controller
     public function destroy($id)
     {
         Fiche::destroy($id);
+        Question::where('fiche_id',$id)->delete();
 
         return redirect()->route('fiches.index')->with('statut', 'La fiche a été supprimée avec succès');
 

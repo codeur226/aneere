@@ -8,7 +8,7 @@
             <div class="page-header">
                 <div class="container">
                     <div class="container">
-                        <div class="mx-auto page-title" style="width:400px">@yield('pageTitle')</div>
+                        <div class="mx-auto page-title" style="width:1000px; display:flex; align-items:center; justify-content:center;">@yield('pageTitle')</div>
                     </div>
                     <ol class="breadcrumb">
                         {{-- <li class="breadcrumb-item"><a href="accueil">Accueil</a></li> --}}

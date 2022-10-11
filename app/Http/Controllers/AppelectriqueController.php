@@ -7,6 +7,8 @@ use App\Models\Appelectrique;
 use App\Models\Audit;
 use App\Models\Fiche;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\FicheExport;
 
 class AppelectriqueController extends Controller
 {
@@ -15,14 +17,9 @@ class AppelectriqueController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($audit_id)
     {
-        $appelectriques = Appelectrique::where('audit_id', 'ed8ca24e-83f3-4b0d-ba99-dc8b50eb2bdc')->get();
-
-        return view('pages.back-office.appelectriques.index', [
-            'appelectriques' => $appelectriques,
-            'title' => 'Fiche 3 : COLLECTE DE DONNEES SUR LES APPAREILS ELECTRIQUES',
-        ]);
+        
     }
 
     public function fiche3($audit_id)
@@ -31,8 +28,18 @@ class AppelectriqueController extends Controller
 
         return view('pages.back-office.appelectriques.create', [
             'appelectriques' => new Appelectrique(),
-            'fiches' => Fiche::all(),
+            'fiches' => Fiche::where('ordre', 3)->get(),
             'audit_id' => $audit_id,
+            'title' => 'COLLECTE DE DONNEES SUR LES APPAREILS ELECTRIQUES',
+        ]);
+    }
+
+    public function fiche3_index($audit_id)
+    {
+        $appelectriques = Appelectrique::where('audit_id', $audit_id)->get();
+
+        return view('pages.back-office.appelectriques.index', [
+            'appelectriques' => $appelectriques,
             'title' => 'COLLECTE DE DONNEES SUR LES APPAREILS ELECTRIQUES',
         ]);
     }
@@ -128,6 +135,10 @@ class AppelectriqueController extends Controller
      */
     public function edit(Appelectrique $appelectrique)
     {
+        return view('pages.back-office.appelectriques.edit', [
+            'appelectrique' => $appelectrique,
+            'title' => 'COLLECTE DE DONNEES SUR LES APPAREILS ELECTRIQUES',
+        ]);
     }
 
     /**
@@ -135,8 +146,27 @@ class AppelectriqueController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateAppelectriqueRequest $request, Appelectrique $appelectrique)
+    public function update(Request $request, Appelectrique $appelectrique)
     {
+        //dd($request);
+        $appelectrique->update([
+            //'fiche_id' => $request->fiche,
+            //'audit_id' => $request->audit, //'ed8ca24e-83f3-4b0d-ba99-dc8b50eb2bdc',
+            'emplacement' => $request->emplacement,
+            'designation' => $request->designation,
+            'quantite' => $request->quantite,
+            'puissance_electrique' => $request->puissance,
+            'duree' => $request->duree,
+            'etat_fonctionnement' => $request->etat,
+            'Observations' => $request->observation,
+    ]);
+
+        $appelectriques = Appelectrique::where('audit_id', $appelectrique->audit_id)->get();
+
+        return view('pages.back-office.appelectriques.index', [
+            'appelectriques' => $appelectriques,
+            'title' => 'COLLECTE DE DONNEES SUR LES APPAREILS ELECTRIQUES',
+        ]);
     }
 
     /**
@@ -146,5 +176,17 @@ class AppelectriqueController extends Controller
      */
     public function destroy(Appelectrique $appelectrique)
     {
+    }
+
+    public function extraireFiche($audit_id)
+    {
+        $audit = Audit::where('id', $audit_id)->get();
+        foreach ($audit as $item) 
+        {
+            $label = 'Appelectrique'.' '.getConsommateurNom($item->consommateur_id).'.xls';
+            return (new FicheExport($audit_id))->download($label);
+        }
+
+        
     }
 }

@@ -6,6 +6,7 @@ use App\Models\Auditeur;
 use App\Models\Domaine;
 use App\Models\Optionsqcm;
 use App\Models\Reponse;
+use App\Models\Consommateur;
 use App\Models\Fiche;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Foundation\Auth\User;
@@ -230,6 +231,18 @@ if (!function_exists('getFicheLibelle')) {
         $record = Fiche::where('id', $id)->first();
         if ($record != null) {
             return $record['libelle'];
+        } else {
+            return '';
+        }
+    }
+}
+
+if (!function_exists('getConsommateurNom')) {
+    function getConsommateurNom($id)
+    {
+        $record = Consommateur::where('id', $id)->first();
+        if ($record != null) {
+            return $record['nom'];
         } else {
             return '';
         }

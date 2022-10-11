@@ -56,6 +56,9 @@ use App\Http\Controllers\ReglementationController;
         //route pourles questions
         Route::resource('/questions', QuestionController::class);
         Route::get('/fiche3/{audit_id}', [AppelectriqueController::class, 'fiche3'])->name('fiche3');
+        Route::get('/fiche3_index/{audit_id}', [AppelectriqueController::class, 'fiche3_index'])->name('fiche3_index');
+        Route::get('/extraireFiche/{audit_id}', [AppelectriqueController::class, 'extraireFiche'])->name('extraireFiche');
+
         Route::get('/terminerAudit/{audit_id}', [AppelectriqueController::class, 'terminerAudit'])->name('terminerAudit');
         Route::resource('/appelectriques', AppelectriqueController::class);
         

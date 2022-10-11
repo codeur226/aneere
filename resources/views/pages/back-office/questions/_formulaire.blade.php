@@ -34,11 +34,31 @@
 {{-- champs libelle --}}
    <div class="form-group input-group">
     <span class="has-float-label">
-      <input type="text" class="form-control" name="libelle" id="libelle"  value="{{old('libelle')?? $questions->etiquette}}" placeholder="libelle de la question (unique)" required/>
+      <input type="text" class="form-control" name="libelle" id="libelle"  value="{{old('libelle')?? $questions->libelle}}" placeholder="libelle de la question (unique)" required/>
       <label for="libelle">Libellé de la question</label>
     </span>
 </div>
 @error('libelle')<small class="text-danger">{{ $message }}<br></small>@enderror
+
+{{-- champ type de question --}}
+<div class="form-group input-group">
+  <span class="has-float-label">
+
+  <select class="form-control" name="type" id="type" required onclick="javascript:yesnoTypeQuestion();">
+
+      <option  selected value="null" disabled >Veuillez choisir le  type de la question</option>
+      <option value="text">Champ texte mono ligne </option>
+      <option value="textarea">Champ texte multi-ligne </option>
+      <option value="radio">Oui/Non  </option>
+      <option value="checkbox">QCM , cases à cocher  </option>
+      <option value="email">E-mail  </option>
+      <option value="date">Date </option>
+      <option value="number">Numéro </option>
+  </select>
+  <label for="type">Type de reponse</label>
+  </span>
+  @error('type')<small class="text-dager">{{ $message }}<br></small>@enderror
+</div>
 
 {{-- champs sous-question --}}
 
@@ -85,28 +105,6 @@
 </div>
 @error('libellesousquestion')<small class="text-danger">{{ $message }}<br></small>@enderror
 
-
-
-
-{{-- champ type de question --}}
-<div class="form-group input-group">
-  <span class="has-float-label">
-
-  <select class="form-control" name="type" id="type" required onclick="javascript:yesnoTypeQuestion();">
-
-      <option  selected value="null" disabled >Veuillez choisir le  type de la question</option>
-      <option value="text">Champ texte mono ligne </option>
-      <option value="textarea ">Champ texte multi-ligne </option>
-      <option value="Radio">Oui/Non  </option>
-      <option value="checkbox">QCM , cases à cocher  </option>
-      <option value="email">E-mail  </option>
-      <option value="date">Date </option>
-      <option value="number">Number </option>
-  </select>
-  <label for="type">Type de reponse</label>
-  </span>
-  @error('type')<small class="text-dager">{{ $message }}<br></small>@enderror
-</div>
 
 {{-- champs des saissie des sous options --}}
 <div class="form-group input-group" id="listeoptions" style="display:none">

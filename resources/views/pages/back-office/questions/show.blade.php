@@ -20,17 +20,8 @@
             <td>{{ $question->libelle }}</td>
         </tr>
         <tr>
-            <th>Type de question :</th>
+            <th>Type :</th>
             <td> {{$question->type_question}} </td>
-        </tr>
-        <tr>
-            <th>Réponse :</th>
-            @if (getReponse($question->id)==NULL)
-            <td>Aucune réponse n'est disponible pour le moment !</td>
-            @endif
-            @if (getReponse($question->id)!=NULL)
-            <td> {{getReponse($question->id)}} </td>
-            @endif
         </tr>
         <tr>
             <td> <strong>Sous-question</strong></td>
@@ -49,15 +40,6 @@
         </tr>
         @endif
         <tr>
-            <th>Sous-Réponse :</th>
-            @if (getSousReponse($question->id)==NULL)
-            <td>Aucune sous-réponse n'est disponible pour le moment !</td>
-            @endif
-            @if (getSousReponse($question->id)!=NULL)
-            <td> {{getSousReponse($question->id)}} </td>
-            @endif
-        </tr>
-        <tr>
             <td colspan="2" style="background-color:#f0f0f8;"></td>
         </tr>
         </tbody>
@@ -68,7 +50,7 @@
     <tr>
         <td>
             <div class="btn-list text-center">
-                <a type="button" class="btn btn-secondary btn-sm" href="{{ route('questions.index') }}">Annuler</a>&nbsp;&nbsp;
+                <a type="button" class="btn btn-secondary btn-sm" href="{{ route('questions.index') }}">Retour</a>&nbsp;&nbsp;
                 <a type="button" class="btn btn-primary btn-sm" href="{{ route('questions.edit',  $question->id) }}">Modifier</a>&nbsp;&nbsp;
                 <a type="button" class="btn btn-danger btn-sm" href="#" onClick="event.preventDefault(); deleteConfirm('{{ $question->id }}')">Supprimer</a>
 

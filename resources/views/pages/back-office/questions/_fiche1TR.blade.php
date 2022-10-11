@@ -1,15 +1,11 @@
 {{-- GESTION DES INFORMATION DE LA FICHE 1 --}}
 <fieldset class="pre-scrollable"> 
   <h2 class='fs-title'>INFORMATIONS D’ORDRE GENERAL</h2>
-  <div class='row'>
-    {{-- <h3class='fs-subtitle'>	Disposez-vousd’uneinstallationsolairephotovoltaïquepourvotrebâtiment?</h3> --}}
-  </div>
-
 
   <div class='row'>
   @csrf
-{{-- {{ dd($q_fiche0) }} --}}
-  @foreach ($q_fiche0 as $question)
+
+  @foreach ($q_fiche1 as $question)
   <br/>
       @if($question->type_question=="text")
       {{-- Construction de questionnnaire de type texte --}}
@@ -77,26 +73,27 @@
           </span>
         </div> 
 
-      @elseif($question->type_question=="checkbox")
-                  <div class="form-group input-group">
-                    <span class="has-float-label">
-                    <br />
-                  <div class='row'>
-                    <h3  class='fs-subtitle'> {{  $question->numero_question }}.  {{  $question->etiquette }}     </h3>
+        @elseif($question->type_question=="checkbox")
+      <div class="form-group input-group">
+        <span class="has-float-label">
+         <br />
+      <div class='row'>
+        <h3  class='fs-subtitle'> {{  $question->numero_question }}.  {{  $question->etiquette }}     </h3>
 
-                  </div>
-                  <div class='row'>
-                    {{-- Parcourir la liste des QCM pour contruire les QCm liés a la questions--}}
-                    @foreach ($optionsqcms as $item)  
-                    {{-- Si le question_id dans QCM == id de question, alors il cnstruit  --}}
-                    @if($item->question_id==$question->id)                                                     
-                    <input type='checkbox' id='{{ $item->libelle_option }}' name='{{ $item->libelle_option}}' value="true" class='action-chekbox-yes'><span style='padding-top: 7px;'> {{ $item->etiquette_option }}</span>
-                    @endif
-                  @endforeach
-                </div>
-              </div>
-                  @error('sousquestion')<small class="text-danger">{{ $message }}<br></small>@enderror
-                
+      </div>
+      <div class='row'>
+         {{-- Parcourir la liste des QCM pour contruire les QCm liés a la questions--}}
+      @foreach ($optionsqcms as $item)  
+      {{-- Si le question_id dans QCM == id de question, alors il cnstruit  --}}
+      @if($item->question_id==$question->id)                                                     
+      <input type='checkbox' id='{{ $item->libelle_option }}' name='{{ $item->libelle_option}}' value="true" class='action-chekbox-yes'><span style='padding-top: 7px;'> {{ $item->etiquette_option }}</span>
+      @endif
+    @endforeach
+    </div>
+  </div>
+      @error('sousquestion')<small class="text-danger">{{ $message }}<br></small>@enderror
+     
+
 
 
       @elseif($question->type_question=="email")
@@ -147,10 +144,6 @@
 
 
 <hr>
-  {{-- <input type='button' name='previous' class='previous action-button' value='Precedent' /> --}}
-  <a href="{{ route('audits.show',$audit) }}" class="btn btn-danger btn-lg mr-2 ">Annuler</a>
-
-  <a class='next btn btn-primary btn-lg mr-2 ' style="color: white;">Suivant</a>
-
-  {{-- <buttontype="button"name='next'class="btnbtn-primarybtn-lgnextaction-button">Suivant</button> --}}
+  <input type='button' name='previous' class='previous action-button' value='Precedent' />
+  <input type='button'  name='next' class='next action-button' value='Suivant' />
 </fieldset>  

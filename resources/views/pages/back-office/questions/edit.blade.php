@@ -23,10 +23,12 @@
 				 <h3 class="card-title mr-5 text-center">Modifier une Question</h3>
 			 </div>
 			 <div class="card-body">
+				@foreach($question as $question)
 				<form action="{{ route('questions.update',$question->id) }}" method="POST" enctype="multipart/form-data" id="msform">
-					@method("POST")
-					@include('pages.back-office.questions._formulaire')
+					@method("PUT")
+					@include('pages.back-office.questions._formulaire_edit')
 				</form>
+				@endforeach
 			 </div>
 		 </div>
 	 </div><!-- COL END -->

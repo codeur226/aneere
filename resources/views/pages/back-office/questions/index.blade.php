@@ -2,7 +2,7 @@
 {{ $title }}
 @endsection
 @section('sectionTitle')
-<li class="breadcrumb-item active">Liste des questions</li>
+<li class="breadcrumb-item active">Listes des questions</li>
 
 @endsection
 <x-master-layout>
@@ -45,10 +45,9 @@
                                                         {{-- @endif --}}
 														<th class="wd-15p">Fiche</th>
 														<th class="wd-15p">Etiquette</th>
+														<th class="wd-10p">Type de question</th>
 														<th class="wd-15p">libelle</th>
 														<th class="wd-15p">Sous question ?</th>
-														<th class="wd-10p">Type de question</th>
-														<th class="wd-10p">Actions</th>
 														{{-- <th class="wd-20p">satut</th> --}}
 													</tr>
 												</thead>
@@ -56,10 +55,10 @@
 													@foreach ($questions as $question)
 													<tr class="position-relative">
                                                      
-                                                        <td>{{ $question->numero_question }}</td>
+                                                        <td>{{ $question->numero_question }} <a class="stretched-link" href="{{ route('questions.show', $question->id) }}"></a> </td>
                                                         <td> {{ $question->fiche->libelle }}</td>
                                                         <td> {{ $question->etiquette}}
-															<a class="stretched-link" href="{{ route('questions.show', $question->id) }}"></a>
+                                                            <td> {{ $question->type_question}}</td>
 															{{-- {{ $audit->consommateur->user->name }} --}}
 														</td>
 
@@ -70,7 +69,6 @@
                                                             @else
                                                              <td> Non</td>
                                                             @endif
-                                                            <td> {{ $question->type_question}}</td>
                                                         {{--<td>
                                                             <a href="{{ route('questions.show', $question->id) }}" type="button" class="btn btn-sm btn-default" ><i class="fa fa-eye fa-lg" style="color:green"></i></a>&nbsp;&nbsp;
                                                             <a href="{{ route('questions.edit', $question->id) }}" type="button" class="btn btn-sm btn-default" ><i class="fa fa-edit fa-lg" style="color:blue"></i></a>&nbsp;&nbsp;

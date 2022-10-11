@@ -9,6 +9,7 @@ use App\Models\Fiche;
 use App\Models\Optionsqcm;
 use App\Models\Question;
 use App\Models\Reponse;
+use Illuminate\Support\Str;
 use App\Models\Reponseqcm;
 use Illuminate\Http\Request;
 use PDF;
@@ -121,7 +122,7 @@ class QuestionController extends Controller
             ]);
         }
 
-        return redirect()->route('questions.index', $question)->with('statut', 'Lq question a été ajouté avec succès');
+        return redirect()->route('questions.index', $question)->with('statut', 'La question a été ajoutée avec succès');
     }
 
     /**
@@ -147,9 +148,9 @@ class QuestionController extends Controller
     public function edit($id)
     {
         $question = Question::where('id', $id)->get();
-        return view('pages.back-office.fiches.edit',[
+        return view('pages.back-office.questions.edit',[
             'question' => $question,
-            'fiches' => Fiche::all(),
+            'fiche' => Fiche::all(),
             'title' => 'Modification de la fiche',
         ]);
     }
@@ -159,8 +160,24 @@ class QuestionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateQuestionRequest $request, Question $question)
+    public function update(Request $request, $id)
     {
+        $question = Question::where('id', $id);
+        $question->update([
+            'fiche_id' => $request->fiche,
+            'numero_question' => $request->numero_question,
+            'etiquette' => $request->etiquette,
+            'libelle' => $request->libelle,
+            'etiquette_sous_question' => $request->etiquette_sous_question,
+            'libelle_sous_question' => $request->libelle_sous_question,
+        ]);
+
+        $question = Question::where('id', $id)->get();
+
+        return view('pages.back-office.questions.show',[
+            'question' => $question,
+            'title' => 'Détails de la question',
+        ]);
     }
 
     /**
@@ -181,6 +198,7 @@ class QuestionController extends Controller
         $questions = Question::All();
         // $reponses = Reponse::All();
         $fiches = Fiche::all();
+
 
         $phpWord = new PhpWord();
 
@@ -206,27 +224,39 @@ class QuestionController extends Controller
         // $reponses= Reponse::where('question_id', $role)->get(),}
 
         //FICHE 00
-        $reponse00 = Reponse::join('questions', 'questions.id', '=', 'reponses.question_id')
+        /*$reponse00 = Reponse::join('questions', 'questions.id', '=', 'reponses.question_id')
             ->join('fiches', 'fiches.id', '=', 'questions.fiche_id')
             ->join('audits', 'audits.id', '=', 'reponses.audit_id')
             ->where('audits.id', $audit->id)
             ->where('fiches.ordre', '=', 0)
             ->orderbyDesc('questions.numero_question')
-            ->get();
+            ->get();*/
+            //dd($reponse00);
         
         /*$reponse_qcm00 = Reponseqcm::join('optionsqcms', 'optionsqcms.id', '=', 'reponseqcms.options_qcm_id')
         ->join('audits', 'audits.id', '=', 'reponseqcms.audit_id')
         ->where('audits.id', $audit->id)
         ->get();*/
-        $reponse_qcm00 = NULL;
+
         //FICHE 01
         $reponse01 = Reponse::join('questions', 'questions.id', '=', 'reponses.question_id')
         ->join('fiches', 'fiches.id', '=', 'questions.fiche_id')
         ->join('audits', 'audits.id', '=', 'reponses.audit_id')
         ->where('audits.id', $audit->id)
         ->where('fiches.ordre', '=', 1)
-        ->orderbyDesc('questions.numero_question')
-        ->get();
+        ->orderby('questions.numero_question')
+        ->get(['reponses.id','reponses.question_id','reponses.audit_id','reponses.reponse',
+        'reponses.sous_reponse','reponses.created_at as Rcreated_at','reponses.updated_at as Rupdated_at','questions.id',
+        'questions.fiche_id', 'questions.etiquette', 'questions.libelle as Qlibelle','questions.type_question',
+        'questions.sous_question','questions.created_at as Qcreated_at','questions.updated_at as Qupdated_at', 
+        'questions.numero_question', 'questions.etiquette_sous_question',
+        'questions.libelle_sous_question', 'fiches.id', 'fiches.domaine_id','fiches.libelle as Flibelle',
+        'fiches.created_at as Fcreated_at','fiches.updated_at as Fupdated_at','fiches.ordre','audits.id','audits.user_id',
+        'audits.consommateur_id','audits.dateDeclaration','audits.dateEcheance','audits.dateCollecte',
+        'audits.pointFocal','audits.telephonePointFocal','audits.etat','audits.created_at as Acreated_at',
+        'audits.updated_at as Aupdated_at','audits.par_aneree',]);
+
+        //dd($reponse01);
 
         //FICHE 02
         $reponse02 = Reponse::join('questions', 'questions.id', '=', 'reponses.question_id')
@@ -234,8 +264,17 @@ class QuestionController extends Controller
           ->join('audits', 'audits.id', '=', 'reponses.audit_id')
           ->where('audits.id', $audit->id)
           ->where('fiches.ordre', '=', 2)
-          ->orderbyDesc('questions.numero_question')
-          ->get();
+          ->orderby('questions.numero_question')
+          ->get(['reponses.id','reponses.question_id','reponses.audit_id','reponses.reponse',
+        'reponses.sous_reponse','reponses.created_at as Rcreated_at','reponses.updated_at as Rupdated_at','questions.id',
+        'questions.fiche_id', 'questions.etiquette', 'questions.libelle as Qlibelle','questions.type_question',
+        'questions.sous_question','questions.created_at as Qcreated_at','questions.updated_at as Qupdated_at', 
+        'questions.numero_question', 'questions.etiquette_sous_question',
+        'questions.libelle_sous_question', 'fiches.id', 'fiches.domaine_id','fiches.libelle as Flibelle',
+        'fiches.created_at as Fcreated_at','fiches.updated_at as Fupdated_at','fiches.ordre','audits.id','audits.user_id',
+        'audits.consommateur_id','audits.dateDeclaration','audits.dateEcheance','audits.dateCollecte',
+        'audits.pointFocal','audits.telephonePointFocal','audits.etat','audits.created_at as Acreated_at',
+        'audits.updated_at as Aupdated_at','audits.par_aneree',]);
 
         //FICHE 03
         $reponse03 = Appelectrique::where('audit_id', $audit->id)->get();
@@ -246,8 +285,17 @@ class QuestionController extends Controller
           ->join('audits', 'audits.id', '=', 'reponses.audit_id')
           ->where('audits.id', $audit->id)
           ->where('fiches.ordre', '=', 4)
-          ->orderbyDesc('questions.numero_question')
-          ->get();
+          ->orderby('questions.numero_question')
+          ->get(['reponses.id','reponses.question_id','reponses.audit_id','reponses.reponse',
+        'reponses.sous_reponse','reponses.created_at as Rcreated_at','reponses.updated_at as Rupdated_at','questions.id',
+        'questions.fiche_id', 'questions.etiquette', 'questions.libelle as Qlibelle','questions.type_question',
+        'questions.sous_question','questions.created_at as Qcreated_at','questions.updated_at as Qupdated_at', 
+        'questions.numero_question', 'questions.etiquette_sous_question',
+        'questions.libelle_sous_question', 'fiches.id', 'fiches.domaine_id','fiches.libelle as Flibelle',
+        'fiches.created_at as Fcreated_at','fiches.updated_at as Fupdated_at','fiches.ordre','audits.id','audits.user_id',
+        'audits.consommateur_id','audits.dateDeclaration','audits.dateEcheance','audits.dateCollecte',
+        'audits.pointFocal','audits.telephonePointFocal','audits.etat','audits.created_at as Acreated_at',
+        'audits.updated_at as Aupdated_at','audits.par_aneree',]);
 
         //FICHE 05
         $reponse05 = Reponse::join('questions', 'questions.id', '=', 'reponses.question_id')
@@ -255,8 +303,17 @@ class QuestionController extends Controller
         ->join('audits', 'audits.id', '=', 'reponses.audit_id')
         ->where('audits.id', $audit->id)
         ->where('fiches.ordre', '=', 5)
-        ->orderbyDesc('questions.numero_question')
-        ->get();
+        ->orderby('questions.numero_question')
+        ->get(['reponses.id','reponses.question_id','reponses.audit_id','reponses.reponse',
+        'reponses.sous_reponse','reponses.created_at as Rcreated_at','reponses.updated_at as Rupdated_at','questions.id',
+        'questions.fiche_id', 'questions.etiquette', 'questions.libelle as Qlibelle','questions.type_question',
+        'questions.sous_question','questions.created_at as Qcreated_at','questions.updated_at as Qupdated_at', 
+        'questions.numero_question', 'questions.etiquette_sous_question',
+        'questions.libelle_sous_question', 'fiches.id', 'fiches.domaine_id','fiches.libelle as Flibelle',
+        'fiches.created_at as Fcreated_at','fiches.updated_at as Fupdated_at','fiches.ordre','audits.id','audits.user_id',
+        'audits.consommateur_id','audits.dateDeclaration','audits.dateEcheance','audits.dateCollecte',
+        'audits.pointFocal','audits.telephonePointFocal','audits.etat','audits.created_at as Acreated_at',
+        'audits.updated_at as Aupdated_at','audits.par_aneree',]);
 
         //FICHE 06
         $reponse06 = Reponse::join('questions', 'questions.id', '=', 'reponses.question_id')
@@ -264,224 +321,361 @@ class QuestionController extends Controller
           ->join('audits', 'audits.id', '=', 'reponses.audit_id')
           ->where('audits.id', $audit->id)
           ->where('fiches.ordre', '=', 6)
-          ->orderbyDesc('questions.numero_question')
-          ->get();
-
-        $audit_id = null;
-        //   SECTION POUR FICHE 00
-        $section = $phpWord->addSection();
-        //$section = $phpWord->loadTemplate('Template.docx');
-
-        $fontStyle = new Style\Font();
-        $fontStyle->setBold(true);
-        $fontStyle->setName('Tahoma');
-        $fontStyle->setSize(15);
-        $text = $section->addText('FICHE N°1 : INFORMATIONS D’ORDRE GENERAL');
-        $text->setFontStyle($fontStyle);
-        $templateProcessor->setComplexValue('F1', $text);
-        foreach ($reponse00 as $item) {
-            $audit_id = $item->audit_id;
-            $text = $section->addText($item->question->numero_question);
-            $text = $section->addText($item->question->libelle);
-            $text = $section->addText($item->question->etiquette.' Réponse : '.$item->reponse);
-            $text = $section->addText($item->question->sous_question.' Sous réponse : '.$item->sous_reponse);
-            if ($item->question->sous_question == true) {
-                $text = $section->addText('Oui');
-            } else {
-                $text = $section->addText('Non');
-            }
-            $templateProcessor->setComplexValue('C1', $text);
-        }
-        // FIN SECTION POUR FICHE 0
+          ->orderby('questions.numero_question')
+          ->get(['reponses.id','reponses.question_id','reponses.audit_id','reponses.reponse',
+        'reponses.sous_reponse','reponses.created_at as Rcreated_at','reponses.updated_at as Rupdated_at','questions.id',
+        'questions.fiche_id', 'questions.etiquette', 'questions.libelle as Qlibelle','questions.type_question',
+        'questions.sous_question','questions.created_at as Qcreated_at','questions.updated_at as Qupdated_at', 
+        'questions.numero_question', 'questions.etiquette_sous_question',
+        'questions.libelle_sous_question', 'fiches.id', 'fiches.domaine_id','fiches.libelle as Flibelle',
+        'fiches.created_at as Fcreated_at','fiches.updated_at as Fupdated_at','fiches.ordre','audits.id','audits.user_id',
+        'audits.consommateur_id','audits.dateDeclaration','audits.dateEcheance','audits.dateCollecte',
+        'audits.pointFocal','audits.telephonePointFocal','audits.etat','audits.created_at as Acreated_at',
+        'audits.updated_at as Aupdated_at','audits.par_aneree',]);
 
         //   SECTION POUR FICHE 01
         $section = $phpWord->addSection();
 
         $fontStyle = new Style\Font();
         $fontStyle->setBold(true);
-        $fontStyle->setName('Tahoma');
-        $fontStyle->setSize(15);
+        $fontStyle->setName('Maiandra GD');
+        $fontStyle->setSize(16);
 
         $fontStylereponse = new Style\Font();
-        $fontStylereponse->setBold(true);
-        $fontStylereponse->setName('Tahoma');
+        //$fontStylereponse->setBold(true);
+        $fontStylereponse->setName('Maiandra GD');
         $fontStylereponse->setSize(12);
-        $fontStylereponse->setItalic(false);
-        $text = $section->addText('FICHE N°2 : COLLECTE DE DONNEES SUR LES SOURCES D\'ALIMENTATION');
+        //$fontStylereponse->setItalic(false);
+        $text = $section->addText('FICHE N°1 : INFORMATIONS D’ORDRE GENERAL');
         $text->setFontStyle($fontStyle);
-        $templateProcessor->setComplexValue('F2', $text);
+        $templateProcessor->setComplexValue('F1', $text);
+        $compteur01 = 0;
         foreach ($reponse01 as $item) {
-            //check pour voir si le type de reponse est oui ou non
-            $reponseOuiNon = null;
-            if ($item->question->type_question == 'Radio') {
-                if ($item->reponse == true) {
-                    $reponseOuiNon = 'Oui';
-                } else {
-                    $reponseOuiNon = 'Non';
+            if ($item->type_question=='radio') {
+                if ($item->reponse=='true') {
+                    $item->reponse = 'Oui';
+
                 }
-                $text = $section->addText($item->question->numero_question.'. '.$item->question->etiquette.' : '.$reponseOuiNon);
-            } else {
-                $text = $section->addText($item->question->numero_question.'. '.$item->question->etiquette.' : '.$item->reponse);
+                if ($item->reponse=='false') {
+                    $item->reponse = 'Non';
+                }
             }
+            
+            if ($item->type_question=='checkbox') {
+                if(Str::contains($item->reponse, ';'))
+                {
+                    $item->reponse = str_replace(';',', ',$item->reponse);
+                }
+            }
+
+            if(Str::contains($item->Qlibelle, '?'))
+            {
+                $item->Qlibelle = str_replace('?','',$item->Qlibelle);
+            }
+
+            // Saut de ligne
+            $text = $section->addText(' ');
+            $templateProcessor->setComplexValue('C'.$compteur01, $text);
+            $compteur01++;
+
+            // Question/Reponse
+            $text = $section->addText($item->numero_question.'. '.$item->Qlibelle.' : '.$item->reponse);
             $text->setFontStyle($fontStylereponse);
-            if ($item->question->sous_question == true) {
-                $text = $section->addText($item->question->sous_question.' : '.$item->sous_reponse);
-            } else {
-                $text = $section->addText('Non');
+            $templateProcessor->setComplexValue('C'.$compteur01, $text);
+            $compteur01++;
+
+            if ($item->sous_question == true) {
+                if(Str::contains($item->libelle_sous_question, '?'))
+                {
+                    $item->libelle_sous_question = str_replace('?','',$item->libelle_sous_question);
+                }
+
+                //Sous-question/Sous-reponse
+                $text = $section->addText($item->libelle_sous_question.': '.$item->sous_reponse);
+                $text->setFontStyle($fontStylereponse);
+                $templateProcessor->setComplexValue('C'.$compteur01, $text);
             }
-            $templateProcessor->setComplexValue('C2', $text);
+            $compteur01++;
         }
         // FIN SECTION POUR FICHE 1
+
         //  DEBUT SECTION POUR FICHE 02
         $section = $phpWord->addSection();
-
-        $fontStyle = new Style\Font();
-        $fontStyle->setBold(true);
-        $fontStyle->setName('Tahoma');
-        $fontStyle->setSize(15);
-        $text = $section->addText('FICHE N°3	: COLLECTE DE DONNEES SUR LES APPAREILS ELECTRIQUES');
+        $text = $section->addText('FICHE N°2: COLLECTE DE DONNEES SUR LES SOURCES D’ALIMENTATION');
         $text->setFontStyle($fontStyle);
-        $templateProcessor->setComplexValue('T3', $text);
-
+        $templateProcessor->setComplexValue('F2', $text);
+        $compteur02 = 21;
         foreach ($reponse02 as $item) {
-            $text = $section->addText($item->question->numero_question.'. '.$item->question->etiquette.' : '.$item->reponse);
+            if ($item->type_question=='radio') {
+                if ($item->reponse=='true') {
+                    $item->reponse = 'Oui';
 
-            if ($item->question->sous_question == true) {
-                $text = $section->addText($item->question->sous_question.' : '.$item->sous_reponse);
-            } else {
-                $text = $section->addText('Non');
+                }
+                if ($item->reponse=='false') {
+                    $item->reponse = 'Non';
+                }
             }
-            $templateProcessor->setComplexValue('C3', $text);
+            
+            if ($item->type_question=='checkbox') {
+                if(Str::contains($item->reponse, ';'))
+                {
+                    $item->reponse = str_replace(';',', ',$item->reponse);
+                }
+            }
+
+            if(Str::contains($item->Qlibelle, '?'))
+            {
+                $item->Qlibelle = str_replace('?','',$item->Qlibelle);
+            }
+
+            // Saut de ligne
+            $text = $section->addText(' ');
+            $templateProcessor->setComplexValue('C'.$compteur02, $text);
+            $compteur02++;
+            $text = $section->addTextBreak();
+
+            // Question/Reponse
+            $text = $section->addText($item->numero_question.'. '.$item->Qlibelle.' : '.$item->reponse);
+            $text->setFontStyle($fontStylereponse);
+            $templateProcessor->setComplexValue('C'.$compteur02, $text);
+            $compteur02++;
+
+            if ($item->sous_question == true) {
+                if(Str::contains($item->libelle_sous_question, '?'))
+                {
+                    $item->libelle_sous_question = str_replace('?','',$item->libelle_sous_question);
+                }
+                $text = $section->addText($item->libelle_sous_question.': '.$item->sous_reponse);
+                $text->setFontStyle($fontStylereponse);
+                $templateProcessor->setComplexValue('C'.$compteur02, $text);
+            }
+            $compteur02++;
         }
         // FIN SECTION POUR FICHE 2
 
         //  DEBUT SECTION POUR FICHE 03
         $section = $phpWord->addSection();
-
-        $fontStyle = new Style\Font();
-        $fontStyle->setBold(true);
-        $fontStyle->setName('Tahoma');
-        $fontStyle->setSize(15);
         $text = $section->addText('FICHE N°3 : COLLECTE DE DONNEES SUR LES APPAREILS ELECTRIQUES');
         $text->setFontStyle($fontStyle);
-        $templateProcessor->setComplexValue('T3', $text);
-        // foreach ($reponse03 as $item) {
+        $templateProcessor->setComplexValue('F3', $text);
+        $compteur03 = 51;
+        foreach ($reponse03 as $item) {
 
-        //     'audit_id' => $request->audit, //'ed8ca24e-83f3-4b0d-ba99-dc8b50eb2bdc',
-        //     'emplacement' => $request->emplacement,
-        //     'designation' => $request->designation,
-        //     'quantite' => $request->quantite,
-        //     'puissance_electrique' => $request->puissance,
-        //     'duree' => $request->duree,
-        //     'etat_fonctionnement' => $request->etat,
-        //     'Observations' => $request->observation,
+            // Saut de ligne
+            $text = $section->addText(' ');
+            $templateProcessor->setComplexValue('C'.$compteur03, $text);
+            $compteur03++;
+            $text = $section->addTextBreak();
 
-        //     $text = $section->addText($item->question->numero_question);
-        //     $text = $section->addText($item->question->libelle);
-        //     $text = $section->addText($item->question->etiquette.' Réponse : '.$item->reponse);
-        //     $text = $section->addText($item->question->sous_question.' Sous réponse : '.$item->sous_reponse);
-        //     if ($item->question->sous_question == true) {
-        //         $text = $section->addText('Oui');
-        //     } else {
-        //         $text = $section->addText('Non');
-        //     }
-        // }
-
+            $text = $section->addText("Emplacement: ".$item->emplacement);
+            $text->setFontStyle($fontStylereponse);
+            $templateProcessor->setComplexValue('C'.$compteur03, $text);
+            $compteur03++;
+            $text = $section->addText("Désignation et caractéristiques techniques par types d’appareils électrique: ".$item->designation);
+            $text->setFontStyle($fontStylereponse);
+            $templateProcessor->setComplexValue('C'.$compteur03, $text);
+            $compteur03++;
+            $text = $section->addText("Quantité: ".$item->quantite);
+            $text->setFontStyle($fontStylereponse);
+            $templateProcessor->setComplexValue('C'.$compteur03, $text);
+            $compteur03++;
+            $text = $section->addText("Puissance électrique en KWH: ".$item->puissance_electrique);
+            $text->setFontStyle($fontStylereponse);
+            $templateProcessor->setComplexValue('C'.$compteur03, $text);
+            $compteur03++;
+            $text = $section->addText("Durée estimative de fonctionnement: ".$item->duree);
+            $text->setFontStyle($fontStylereponse);
+            $templateProcessor->setComplexValue('C'.$compteur03, $text);
+            $compteur03++;
+            $text = $section->addText("Etat fonctionnement: ".$item->etat_fonctionnement);
+            $text->setFontStyle($fontStylereponse);
+            $templateProcessor->setComplexValue('C'.$compteur03, $text);
+            $compteur03++;
+            $text = $section->addText("Observations: ".$item->Observations);
+            $text->setFontStyle($fontStylereponse);
+            $templateProcessor->setComplexValue('C'.$compteur03, $text);
+            $compteur03++;
+        }
         // FIN SECTION POUR FICHE 3
 
         //  DEBUT SECTION POUR FICHE 04
         $section = $phpWord->addSection();
-
-        $fontStyle = new Style\Font();
-        $fontStyle->setBold(true);
-        $fontStyle->setName('Tahoma');
-        $fontStyle->setSize(15);
-        $text = $section->addText('FICHE N°4 : COLLECTE DE DONNEES SUR LES TABLEAUX ELECTRIQUES');
+        $text = $section->addText('FICHE N°4: COLLECTE DE DONNEES SUR LES TABLEAUX ELECTRIQUES');
         $text->setFontStyle($fontStyle);
-        $templateProcessor->setComplexValue('T4', $text);
+        $templateProcessor->setComplexValue('F4', $text);
+        $compteur04 = 71;
         foreach ($reponse04 as $item) {
-            $text = $section->addText($item->question->numero_question);
-            $text = $section->addText($item->question->libelle);
-            $text = $section->addText($item->question->etiquette.' Réponse : '.$item->reponse);
-            $text = $section->addText($item->question->sous_question.' Sous réponse : '.$item->sous_reponse);
-            if ($item->question->sous_question == true) {
-                $text = $section->addText('Oui');
-            } else {
-                $text = $section->addText('Non');
+            if ($item->type_question=='radio') {
+                if ($item->reponse=='true') {
+                    $item->reponse = 'Oui';
+
+                }
+                if ($item->reponse=='false') {
+                    $item->reponse = 'Non';
+                }
             }
-            $templateProcessor->setComplexValue('C4', $text);
+            
+            if ($item->type_question=='checkbox') {
+                if(Str::contains($item->reponse, ';'))
+                {
+                    $item->reponse = str_replace(';',', ',$item->reponse);
+                }
+            }
+
+            if(Str::contains($item->Qlibelle, '?'))
+            {
+                $item->Qlibelle = str_replace('?','',$item->Qlibelle);
+            }
+
+            // Saut de ligne
+            $text = $section->addText(' ');
+            $templateProcessor->setComplexValue('C'.$compteur04, $text);
+            $compteur04++;
+            $text = $section->addTextBreak();
+
+            // Question/Reponse
+            $text = $section->addText($item->numero_question.'. '.$item->Qlibelle.' : '.$item->reponse);
+            $text->setFontStyle($fontStylereponse);
+            $templateProcessor->setComplexValue('C'.$compteur04, $text);
+            $compteur04++;
+
+            if ($item->sous_question == true) {
+                if(Str::contains($item->libelle_sous_question, '?'))
+                {
+                    $item->libelle_sous_question = str_replace('?','',$item->libelle_sous_question);
+                }
+                $text = $section->addText($item->libelle_sous_question.': '.$item->sous_reponse);
+                $text->setFontStyle($fontStylereponse);
+                $templateProcessor->setComplexValue('C'.$compteur04, $text);
+            }
+            $compteur04++;
         }
         // FIN SECTION POUR FICHE 4
 
         //  DEBUT SECTION POUR FICHE 05
         $section = $phpWord->addSection();
-
-        $fontStyle = new Style\Font();
-        $fontStyle->setBold(true);
-        $fontStyle->setName('Tahoma');
-        $fontStyle->setSize(15);
-        $text = $section->addText('FICHE N°5 : COLLECTE DE DONNEES SUR LES CABLES ELECTRIQUES');
+        $text = $section->addText('FICHE N°5: COLLECTE DE DONNEES SUR LES CABLES ELECTRIQUES');
         $text->setFontStyle($fontStyle);
-        $templateProcessor->setComplexValue('T5', $text);
-
+        $templateProcessor->setComplexValue('F5', $text);
+        $compteur05 = 111;
         foreach ($reponse05 as $item) {
-            $text = $section->addText();
-            // $text = $section->addText($item->question->libelle);
-            $text = $section->addText($item->question->numero_question.'. '.$item->question->etiquette.' : '.$item->reponse);
+            if ($item->type_question=='radio') {
+                if ($item->reponse=='true') {
+                    $item->reponse = 'Oui';
 
-            if ($item->question->sous_question == true) {
-                $text = $section->addText($item->question->sous_question.' : '.$item->sous_reponse);
-            } else {
-                //$text = $section->addText('Non');
+                }
+                if ($item->reponse=='false') {
+                    $item->reponse = 'Non';
+                }
             }
-            $templateProcessor->setComplexValue('C5', $text);
+            
+            if ($item->type_question=='checkbox') {
+                if(Str::contains($item->reponse, ';'))
+                {
+                    $item->reponse = str_replace(';',', ',$item->reponse);
+                }
+            }
+
+            if(Str::contains($item->Qlibelle, '?'))
+            {
+                $item->Qlibelle = str_replace('?','',$item->Qlibelle);
+            }
+
+            // Saut de ligne
+            $text = $section->addText(' ');
+            $templateProcessor->setComplexValue('C'.$compteur05, $text);
+            $compteur05++;
+            $text = $section->addTextBreak();
+
+            // Question/Reponse
+            $text = $section->addText($item->numero_question.'. '.$item->Qlibelle.' : '.$item->reponse);
+            $text->setFontStyle($fontStylereponse);
+            $templateProcessor->setComplexValue('C'.$compteur05, $text);
+            $compteur05++;
+
+            if ($item->sous_question == true) {
+                if(Str::contains($item->libelle_sous_question, '?'))
+                {
+                    $item->libelle_sous_question = str_replace('?','',$item->libelle_sous_question);
+                }
+                $text = $section->addText($item->libelle_sous_question.': '.$item->sous_reponse);
+                $text->setFontStyle($fontStylereponse);
+                $templateProcessor->setComplexValue('C'.$compteur05, $text);
+                $compteur05++;
+            }
         }
         // FIN SECTION POUR FICHE 5
 
         //  DEBUT SECTION POUR FICHE 06
         $section = $phpWord->addSection();
-
-        $fontStyle = new Style\Font();
-        $fontStyle->setBold(true);
-        $fontStyle->setName('Tahoma');
-        $fontStyle->setSize(15);
-        $text = $section->addText('FICHE N°6	: COLLECTE DE DONNEES SUR LES CABLES ELECTRIQUES');
+        $text = $section->addText('FICHE N°6: INFORMATIONS D’ORDRE SPECIFIQUE');
         $text->setFontStyle($fontStyle);
-        $templateProcessor->setComplexValue('T6', $text);
-
+        $templateProcessor->setComplexValue('F6', $text);
+        $compteur06 = 131;
         foreach ($reponse06 as $item) {
-            $text = $section->addText($item->question->numero_question);
-            $text = $section->addText($item->question->libelle);
-            $text = $section->addText($item->question->etiquette.' Réponse : '.$item->reponse);
-            $text = $section->addText($item->question->sous_question.' Sous réponse : '.$item->sous_reponse);
-            if ($item->question->sous_question == true) {
-                $text = $section->addText('Oui');
-            } else {
-                $text = $section->addText('Non');
+            if ($item->type_question=='radio') {
+                if ($item->reponse=='true') {
+                    $item->reponse = 'Oui';
+
+                }
+                if ($item->reponse=='false') {
+                    $item->reponse = 'Non';
+                }
             }
-            $templateProcessor->setComplexValue('C6', $text);
+            
+            if ($item->type_question=='checkbox') {
+                if(Str::contains($item->reponse, ';'))
+                {
+                    $item->reponse = str_replace(';',', ',$item->reponse);
+                }
+            }
+
+            if(Str::contains($item->Qlibelle, '?'))
+            {
+                $item->Qlibelle = str_replace('?','',$item->Qlibelle);
+            }
+
+            // Saut de ligne
+            $text = $section->addText(' ');
+            $templateProcessor->setComplexValue('C'.$compteur06, $text);
+            $compteur06++;
+            $text = $section->addTextBreak();
+
+            // Question/Reponse
+            $text = $section->addText($item->numero_question.'. '.$item->Qlibelle.' : '.$item->reponse);
+            $text->setFontStyle($fontStylereponse);
+            $templateProcessor->setComplexValue('C'.$compteur06, $text);
+            $compteur06++;
+
+            if ($item->sous_question == true) {
+                if(Str::contains($item->libelle_sous_question, '?'))
+                {
+                    $item->libelle_sous_question = str_replace('?','',$item->libelle_sous_question);
+                }
+                $text = $section->addText($item->libelle_sous_question.': '.$item->sous_reponse);
+                $text->setFontStyle($fontStylereponse);
+                $templateProcessor->setComplexValue('C'.$compteur06, $text);
+            }
+            $compteur06++;
         }
-        // $templateProcessor->setValue('contenu', $text);
         // FIN SECTION POUR FICHE 6
-        // foreach($questions as $item)
-        // {
-            // $templateProcessor->setValue('contenu', $phpWord);
 
-        // }
-        //${placeHolder} will be replaced with 'Value Set for place holder'
-        // $templateProcessor->setValue('f1', 'Julien \nDEMBELE');
-       
+        // Nettoyer toutes les lignes non remplies
+        for ($i=0; $i < 500; $i++) { 
+            $text = $section->addText(' ');
+            $templateProcessor->setComplexValue('C'.$i, $text);
+        }
 
-        $templateProcessor->saveAs('RapportFinal.docx');
+        $templateProcessor->saveAs('RapportFinal'.' '.getConsommateurNom($audit->consommateur_id).''.'.docx');
       
       
         $objWriter = IOFactory::createWriter($phpWord, 'Word2007');
         // Get all document xml code
         // $fullxml = $objWriter->getWriterPart('Document')->write();
        
-        $objWriter->save('Rapport d\'audit'.''.$audit_id.''.'.docx');
+        $objWriter->save('Rapport d\'audit'.' '.getConsommateurNom($audit->consommateur_id).''.'.docx');
 
-        return response()->download(public_path('Rapport d\'audit'.''.$audit_id.''.'.docx'));
+        return response()->download(public_path('Rapport d\'audit'.' '.getConsommateurNom($audit->consommateur_id).''.'.docx'));
 
         // $data = [
         //     'title' => 'Welcome to Tutsmake.com',
@@ -597,51 +791,58 @@ class QuestionController extends Controller
 
     public function questionnaire(Audit $audit)
     {
-        //dd($audit);
-        // $question1 = Question::first();
-        // $optionsqcms=Optionsqcm::all();
-        // // $question1 = Question::where('id', '=', 'dc132081-2a95-4333-b8da-2c8a848e6794')->get();
-        // dd($question1->optionsqcms);
-
-        //**** QUESTIONS DE LA FICHE 0 */
-
+        // QUESTIONS DE LA FICHE 0
         $q_fiche0 = Question::join('fiches', 'fiches.id', '=', 'questions.fiche_id')
-        // ->orderBy('questions.id')
-        ->where('fiches.ordre', '=', 0)//->get('questions.id');
-        ->get(['questions.id', 'questions.etiquette', 'questions.libelle',
-        'questions.type_question', 'questions.sous_question', ]);
+        ->where('fiches.ordre', '=', 0)
+        ->get(['questions.id', 'questions.etiquette', 'questions.libelle','questions.type_question',
+         'questions.sous_question', 'questions.numero_question', 'questions.etiquette_sous_question', 'questions.libelle_sous_question' ]);
 
-        // dd($q_fiche0);
         // QUESTIONS DE LA FICHE 1
         $q_fiche1 = Question::join('fiches', 'fiches.id', '=', 'questions.fiche_id')
         ->where('fiches.ordre', '=', 1)
-        ->get();
-        // QUESTIONS DE LA FICHE 2
+        ->orderby('questions.numero_question')
+        ->get(['questions.id', 'questions.etiquette', 'questions.libelle', 'questions.type_question',
+         'questions.sous_question', 'questions.numero_question', 'questions.etiquette_sous_question', 'questions.libelle_sous_question' ]);
+
+         // QUESTIONS DE LA FICHE 2
         $q_fiche2 = Question::join('fiches', 'fiches.id', '=', 'questions.fiche_id')
         ->where('fiches.ordre', '=', 2)
-        ->get();
+        ->orderby('questions.numero_question')
+        ->get(['questions.id', 'questions.etiquette', 'questions.libelle', 'questions.type_question',
+         'questions.sous_question', 'questions.numero_question', 'questions.etiquette_sous_question', 'questions.libelle_sous_question' ]);
+
         // QUESTIONS DE LA FICHE 3
-        $q_fiche3 = Question::join('fiches', 'fiches.id', '=', 'questions.fiche_id')
+        /*$q_fiche3 = Question::join('fiches', 'fiches.id', '=', 'questions.fiche_id')
         ->where('fiches.ordre', '=', 3)
-        ->get();
+        ->get(['questions.id', 'questions.etiquette', 'questions.libelle', 'questions.type_question',
+         'questions.sous_question', 'questions.numero_question', 'questions.etiquette_sous_question', 'questions.libelle_sous_question' ]);*/
+
         //QUESTIONS DE LA FICHE 4
         $q_fiche4 = Question::join('fiches', 'fiches.id', '=', 'questions.fiche_id')
         ->where('fiches.ordre', '=', 4)
-        ->get();
+        ->orderby('questions.numero_question')
+        ->get(['questions.id', 'questions.etiquette', 'questions.libelle', 'questions.type_question',
+         'questions.sous_question', 'questions.numero_question', 'questions.etiquette_sous_question', 'questions.libelle_sous_question' ]);
+
         //QUESTIONS DE LA FICHE 5
         $q_fiche5 = Question::join('fiches', 'fiches.id', '=', 'questions.fiche_id')
         ->where('fiches.ordre', '=', 5)
-        ->get();
+        ->orderby('questions.numero_question')
+        ->get(['questions.id', 'questions.etiquette', 'questions.libelle', 'questions.type_question',
+         'questions.sous_question', 'questions.numero_question', 'questions.etiquette_sous_question', 'questions.libelle_sous_question' ]);
+
         // QUESTIONS DE LA FICHE 6
         $q_fiche6 = Question::join('fiches', 'fiches.id', '=', 'questions.fiche_id')
         ->where('fiches.ordre', '=', 6)
-        ->get();
+        ->orderby('questions.numero_question')
+        ->get(['questions.id', 'questions.etiquette', 'questions.libelle', 'questions.type_question',
+         'questions.sous_question', 'questions.numero_question', 'questions.etiquette_sous_question', 'questions.libelle_sous_question' ]);
 
         return view('pages.back-office.questions.questionnaire', [
             'q_fiche0' => $q_fiche0,
             'q_fiche1' => $q_fiche1,
             'q_fiche2' => $q_fiche2,
-            'q_fiche3' => $q_fiche3,
+            //'q_fiche3' => $q_fiche3,
             'q_fiche4' => $q_fiche4,
             'q_fiche5' => $q_fiche5,
             'q_fiche6' => $q_fiche6,

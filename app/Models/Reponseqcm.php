@@ -12,13 +12,15 @@ class Reponseqcm extends Model
     use Uuids;
     public $guarded = [];
 
-    public function optionqcm()
+    public function optionsqcm()
     {
+        //une reponse appartient a une optionqcm
         return $this->belongsTo(Optionqcm::class);
     }
 
     public function audit()
     {
+        //une reponse appartient a un audit
         return $this->belongsTo(Audit::class);
     }
 }

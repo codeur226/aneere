@@ -116,7 +116,7 @@
                 <li><a href="{{ route('collectes.index') }}" class="slide-item"> Electricité</a></li>
                 {{-- <li><a href="{{ route('questions.create') }}" class="slide-item"> Question</a></li>
                 <li><a href="{{ route('questionnaire') }}" class="slide-item"> Questionnaire</a></li> --}}
-                <li><a href="#" class="slide-item"> Carburant</a></li>
+                {{-- <li><ahref="#"class="slide-item">Carburant</a></li> --}}
                 <li><a href="{{ route('indexback') }}" class="slide-item"> Liste des rapports externes</a></li>
 
                 
@@ -155,7 +155,7 @@
             </a>
             <ul class="slide-menu">
                
-                <li><a href="{{ route('fiches.index') }}" class="slide-item"> Parametrage des Fiches</a></li>
+                <li><a href="{{ route('fiches.index') }}" class="slide-item"> Gestion des Fiches</a></li>
                 <li><a href="{{ route('questions.index') }}" class="slide-item">Gestion des Questions</a></li>
                 {{-- <li><a href="{{ route('questionnaire') }}" class="slide-item"> Questionnaire</a></li> --}}
                 

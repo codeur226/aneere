@@ -2,15 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\NotifyMail;
 use App\Models\Audit;
 use App\Models\Auditeur;
 use App\Models\Commentaire;
 use App\Models\Consommateur;
 use App\Models\Etablissement;
 use App\Models\Rapport;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 
 class RapportController extends Controller
 {
@@ -95,6 +98,7 @@ class RapportController extends Controller
     {
         $consommateur = Consommateur::where('consommateurs.user_id', '=',Auth::user()->id)
         ->first();
+        $responsable = User::where('role_id', '=', '9c93bbad-990b-46ae-a981-f8d8b0951124')->first();
         //dd($consommateur->id);
         // dd($request);
         //join('users', 'users.id', '=', 'consommateurs.user_id')
@@ -122,7 +126,10 @@ class RapportController extends Controller
         ]);
         $rapports = Rapport::All();
 
+        Mail::to($responsable)->send(new NotifyMail($rapport, $responsable)); // envoie du mail
+
         return redirect()->route('rapports.index', ['rapport' => $rapport, 'rapports' => $rapports])->with('statut', 'Le rapport a été ajouté avec succès');
+
     }
 
     /**

@@ -1,99 +1,79 @@
+
 @section("pageTitle")
 {{ $title }}
 @endsection
 
 @section('sectionTitle')
-	<?php $i = 0 ?>
-	@foreach($appelectriques as $item)
-		@if($i<1)
-		<li class="breadcrumb-item"><a href="{{ route('audits.show', $item->audit_id) }}">{{ "Audit N° : ".$item->audit_id }}</a></li>
-		{{-- <li class="breadcrumb-item"><a href="#">Details des Questions</a></li> --}}
-		<li class="breadcrumb-item active" aria-current="page" class="card-title mr-5 text-center"><a href="{{ route('fiche3_index',$item->audit_id) }}"> Liste des données pour cet audit</a></li>
-		{{ $i++ }}
-		@endif
-	@endforeach
+<li class="breadcrumb-item"><a href="{{ route('collectes.index') }}">COLLECTE DE DONNEES SUR LES APPAREILS ELECTRIQUES</a></li>
+{{-- <li class="breadcrumb-item"><a href="#">Details des Questions</a></li> --}}
+<li class="breadcrumb-item active" aria-current="page" class="card-title mr-5 text-center"><a href="{{ route('appelectriques.index') }}"> 
+	Listes des données pour cette audit </a></li> 
+	{{-- {{ $audit_id }} --}}
 @endsection
 <x-master-layout>
 	<div class="row">
 		<div class="container">
-			<div class="col-lg-12">
-				@include('pages.back-office.partials._message_flash')
-			</div>
+		 <div class="col-lg-12">
+			 @include('pages.back-office.partials._message_flash')
+
+			 {{-- <div class="ml-auto pageheader-btn"> --}}
+				{{-- <div class="ml-auto pageheader-btn">
+				
+				</div> --}}
+
+		 </div>
 		</div>
-	</div>
-
-	<?php $i= 0 ?>
-
+		
+		
+		</div>
+	 </div>
 	<div class="row">
-	 	<div class=" col-md-10 offset-1 ">
-			<div class="card">
-				@foreach($appelectriques as $item)
-					@if($i<1)
-						<?php $i++ ?>
-			 			<div class="card-header">
-							<h3 class="card-title mr-5 text-center">
-								<a href="{{ route("extraireFiche",$item->audit_id) }}" class="btn btn-success btn-icon text-white">
-									<span>
-										<i class="fa fa-download"></i>
-									</span>Extraire les données sur les appareils électiques
-								</a>
-							</h3>
-						</div>
-					@endif
-				@endforeach
-			 
-				@if($appelectriques->count() > 0)
-					<div class="card-body">
-						<div class="table-responsive">
-							<?php $number=1 ?>
-							<table id="data-table1" class="table table-striped table-bordered text-nowrap w-100">
-								<thead>
-									<tr>
-										{{-- <thclass="wd-15p">Consommateur</th> --}}
-										{{-- <thclass="wd-15p">Audit</th> --}}
-										{{-- <thclass="wd-15p">Fiche</th> --}}
-										<th class="wd-15p">Ordre</th>
-										<th class="wd-15p">Emplacement</th>
-										<th class="wd-15p">Désignation</th>
-										<th class="wd-10p">Quantite</th>
-										<th class="wd-10p">Puissance Electrique</th>
-										<th class="wd-10p">Duree</th>
-										<th class="wd-10p">Etat</th>
-										<th class="wd-10p">Observations</th>
-										{{-- <th class="wd-20p">satut</th> --}}
-									</tr>
-								</thead>
-								<tbody>
-									@foreach ($appelectriques as $item)
-									<tr class="position-relative">
-										<td>{{ $number++ }}
-											<a class="stretched-link" href="{{ route('appelectriques.edit', $item) }}" data-toggle="tooltip" data-placement="top" title="Modifier la fiche"></a>
-										</td>
-										{{-- <td>$item->audit->consommateur->nom</td> --}}
-										{{-- <td>$item->audit->dateDeclaration."(AuditN°:".$item->audit_id.')'</td> --}}
-										{{-- <td>$item->fiche->libelle </td>--}}										
-										<td> {{ $item->emplacement }}</td>
-										<td> {{ $item->designation}}</td>
-										<td> {{ $item->quantite }}</td>
-										<td> {{ $item->puissance_electrique }}</td>
-										<td> {{ $item->duree }}</td>
-										<td> {{ $item->etat_fonctionnement }}</td>
-										<td> {{ $item->Observations }}</td>								
-
-									</tr>
-									@endforeach
-								</tbody>
-							</table>
-							@else
-							<div class="card-body">
-								<div class="padding-6">
-									Aucune données pour cette fiche pour le moment						</div>
-							</div>
-
-						</div>
+	 <div class=" col-md-8 offset-1 ">
+		 <div class="card">
+			 <div class="card-header">
+				 <h3 class="card-title mr-5 text-center"><a href="{{ route('appelectriques.index') }}" class="btn btn-primary btn-icon text-white">
+					<span>
+						<i class="fa fa-book"></i>
+					</span>Liste des données des appareils électique pour cet audit
+				</a></h3>
+				  {{-- ordinateur, imprimante, photocopieuse, congélateur, projecteur, etc --}}
+			 </div>
+			 <div class="card-body">
+				<form action="{{ route('appelectriques.store') }}" method="POST" enctype="multipart/form-data" id="msform3">
+					@method("POST")
+					@include('pages.back-office.appelectriques._formulaire')
+					@foreach($fiches as $fiche)
+					<div class="form-group" >
+						<input type="hidden" id="fiche" value="{{ old('fiche') ?? $fiche->id}}" name="fiche" class="form-control">
 					</div>
-				@endif
-				<!-- TABLE WRAPPER -->
+					@endforeach
+					<div class="form-group" >
+						<input type="hidden" id="audit" value="{{ old('audit') ?? $audit_id}}" name="audit" class="form-control">
+					  </div>
+   
+					<div class="card-footer">
+							<a href="{{ route("terminerAudit",$audit_id) }}" class="btn btn-success btn-lg mr-2 btn_valider"  onClick="
+					event.preventDefault();
+					if(confirm('Voulez vous vraiment terminer l'audit ?'))
+					document.getElementById('{{ $audit_id }}').submit();" ><i class="fa fa-check-square"></i> Terminer l'audit</a>
+							<button type="submit" class="btn btn-primary btn-lg">Enregistrer</button>
+					 </div>
+				</form>
+
+				<form id="{{ $audit_id }}" method="POST" enctype="multipart/form-data" action="{{ route("terminerAudit",$audit_id) }}">
+					@csrf
+					@method("GET")
+				</form>
+
+			 </div>
+
+
+
+
+
+			 
+				 
+			 
 
 
 
@@ -101,13 +81,9 @@
 
 
 
-
-
-
-
-			</div>
-		</div><!-- COL END -->
- 	</div>
+		 </div>
+	 </div><!-- COL END -->
+ </div>
  <!-- ROW-1 End-->
 
  <script src="{{asset('assetadmin/js/jquery-3.4.1.min.js')}}"></script>
